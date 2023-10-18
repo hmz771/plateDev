@@ -1,13 +1,8 @@
 package com.bezkoder.spring.security.login.controllers;
 
 import com.bezkoder.spring.security.login.models.Project;
-import com.bezkoder.spring.security.login.payload.request.SignupRequest;
-import com.bezkoder.spring.security.login.payload.response.MessageResponse;
-import com.bezkoder.spring.security.login.repository.ProjectRepository;
-import com.bezkoder.spring.security.login.repository.UserRepository;
 import com.bezkoder.spring.security.login.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
