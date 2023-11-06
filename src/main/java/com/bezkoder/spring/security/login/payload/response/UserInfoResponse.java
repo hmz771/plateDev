@@ -18,7 +18,11 @@ public class UserInfoResponse {
 
 	}
 
-	public Long getId() {
+    public UserInfoResponse(Long id, String username, String email, List<String> roles) {
+    }
+
+
+    public Long getId() {
 		return id;
 	}
 
@@ -45,4 +49,11 @@ public class UserInfoResponse {
 	public List<String> getRoles() {
 		return roles;
 	}
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(Long id) {
+        this.token = token;
+    }
 }

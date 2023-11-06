@@ -23,6 +23,7 @@ import java.util.List;
         void deleteJobById(Long JobId);
 
 
+        List<Job> fetchJobListByName(String name);
 
-
-}
+        Job fetchJobListById(Long jobId);
+    }

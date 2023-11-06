@@ -1,10 +1,8 @@
 package com.bezkoder.spring.security.login.services.servicesImpl;
 
 import com.bezkoder.spring.security.login.models.Job;
-import com.bezkoder.spring.security.login.models.Job;
+import com.bezkoder.spring.security.login.models.Project;
 import com.bezkoder.spring.security.login.repository.JobRepository;
-import com.bezkoder.spring.security.login.repository.JobRepository;
-import com.bezkoder.spring.security.login.services.JobService;
 import com.bezkoder.spring.security.login.services.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,5 +56,17 @@ class JobServiceImpl implements JobService {
     public void deleteJobById(Long JobId)
     {
         jobRepository.deleteById(JobId);
+    }
+
+    @Override
+    public List<Job> fetchJobListByName(String JobName) {
+        return (List<Job>)
+                jobRepository.findByNameContaining(JobName).get();
+    }
+
+    @Override
+    public Job fetchJobListById(Long id) {
+        return (Job)
+                jobRepository.findById(id).get();
     }
 }

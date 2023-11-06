@@ -33,12 +33,14 @@ public class JwtUtils {
 
   public String getJwtFromCookies(HttpServletRequest request) {
     Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+     // WebUtils.get
     if (cookie != null) {
       return cookie.getValue();
     } else {
       return null;
     }
   }
+
 
   public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
     String jwt = generateTokenFromUsername(userPrincipal.getUsername());

@@ -13,6 +13,7 @@ public interface ProjectService {
 
     // Read operation
     List<Project> fetchProjectList();
+    List<Project> fetchProjectListByName(String ProjectName);
 
     // Update operation
     Project updateProject(Project Project,
@@ -22,5 +23,6 @@ public interface ProjectService {
     void deleteProjectById(Long ProjectId);
 
 
-
+    Project fetchProjectListById(Long id);
+    void createFolder(String pth);
 }

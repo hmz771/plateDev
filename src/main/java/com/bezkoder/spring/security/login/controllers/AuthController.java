@@ -1,9 +1,6 @@
 package com.bezkoder.spring.security.login.controllers;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -71,9 +68,23 @@ public class AuthController {
     List<String> roles = userDetails.getAuthorities().stream()
         .map(item -> item.getAuthority())
         .collect(Collectors.toList());
+//    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+//        .body(jwtCookie.getValue().toString());
+      HttpHeaders headers = new HttpHeaders();
+      headers.add("Authorization", "Bearer " + jwtCookie.getValue());
+      return ResponseEntity.ok()
+               .headers(headers)
+              .body(new UserInfoResponse(userDetails.getId(),
+                      userDetails.getUsername(),
+                      userDetails.getEmail(),
+                      roles,jwtCookie.getValue()));
 
-    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-        .body(jwtCookie.getValue().toString());
+//      return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+//              .body(new UserInfoResponse(userDetails.getId(),
+//                      userDetails.getUsername(),
+//                      userDetails.getEmail(),
+//                      roles));
+
   }
 
   @PostMapping("/signup")
