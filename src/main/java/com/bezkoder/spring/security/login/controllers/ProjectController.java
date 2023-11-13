@@ -1,32 +1,69 @@
 package com.bezkoder.spring.security.login.controllers;
 
 import com.bezkoder.spring.security.login.models.Job;
+import com.bezkoder.spring.security.login.models.Parameter;
 import com.bezkoder.spring.security.login.models.Project;
+import com.bezkoder.spring.security.login.models.User;
 import com.bezkoder.spring.security.login.payload.response.MessageResponse;
+import com.bezkoder.spring.security.login.repository.ParameterRepository;
+import com.bezkoder.spring.security.login.repository.UserRepository;
+import com.bezkoder.spring.security.login.security.services.UserDetailsImpl;
+import com.bezkoder.spring.security.login.security.services.UserDetailsServiceImpl;
+import com.bezkoder.spring.security.login.services.ParameterService;
 import com.bezkoder.spring.security.login.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
 @RequestMapping("/api")
 public class ProjectController {
 
-    @Autowired private ProjectService projectService;
+    @Autowired  private ProjectService projectService;
+    @Autowired private ParameterService parameterService;
+    @Autowired private UserRepository userRepository;
+    private User getCurrentUser()
+    {   String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    // Save operation 
+
+
+        //**************************
+
+        Optional<User> userOptional = userRepository.findByUsername(userName);
+        if (userOptional.isPresent()) {
+            return (userOptional.get());
+
+
+            // Now, userId contains the ID of the user
+        } else {
+            // Handle the case where the user is not found
+            return null;
+        }
+
+    }
+    // add operation
     @PostMapping("/Projects")
     public Project saveProject(
              @RequestBody Project Project)
     {
 
+            Project.setUser( getCurrentUser());
+
+
+
+
         projectService.saveProject(Project);
-        projectService.createFolder(Project.getPath());
+        //Project.setPath(parameterRepository.findByName(""));
+        projectService.createFolder(Project);
         return null;
 
     }
@@ -46,11 +83,12 @@ public class ProjectController {
 
     // Read operation
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/Projects")
     public List<Project> fetchProjectList()
     {
-        var tt= projectService.fetchProjectList();
+      var ee=  getCurrentUser();
+        var tt= projectService.fetchProjectList(ee);
         return tt;
     }
 
@@ -89,6 +127,28 @@ public class ProjectController {
     {
         return projectService.fetchProjectListById(
                 ProjectId);
+
+
+
+    }
+    @GetMapping("/Parameters/{id}")
+    public Project findParameterByName(@PathVariable("id")
+                                           Long ProjectId)
+    {
+        return projectService.fetchProjectListById(
+                ProjectId);
+
+
+
+    }
+    @GetMapping("/Projects/Params")
+    public Parameter findParameterByName(@RequestParam String name)
+    {
+        var el=parameterService.fetchParameterListByName(name);
+        if(!el.isEmpty())
+        return parameterService.fetchParameterListByName(name).get(0);
+        else
+            return null;
 
 
 

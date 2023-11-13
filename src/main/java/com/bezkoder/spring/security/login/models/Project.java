@@ -1,5 +1,6 @@
 package com.bezkoder.spring.security.login.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,22 @@ public class Project {
     @JoinColumn(name = "project_id")
 
     private List<Job> jobs = new ArrayList<>();
+    //***********************
 
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    @ManyToOne(
+            cascade = CascadeType.ALL,fetch = FetchType.LAZY    )
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+
+    private User user = new User();
 
 }

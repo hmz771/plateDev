@@ -1,6 +1,7 @@
 package com.bezkoder.spring.security.login.services;
 
 import com.bezkoder.spring.security.login.models.Project;
+import com.bezkoder.spring.security.login.models.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface ProjectService {
     Project saveProject(Project Project);
 
     // Read operation
-    List<Project> fetchProjectList();
+    List<Project> fetchProjectList(User user);
     List<Project> fetchProjectListByName(String ProjectName);
 
     // Update operation
@@ -24,5 +25,5 @@ public interface ProjectService {
 
 
     Project fetchProjectListById(Long id);
-    void createFolder(String pth);
+    void createFolder(Project pth);
 }

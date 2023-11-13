@@ -39,4 +39,9 @@ public class TestController {
   public String adminAccess() {
     return "Admin Board.";
   }
+    @GetMapping("/juser")
+    @PreAuthorize("hasRole('USER')")
+    public String justUserAccess() {
+        return "Just User Content.";
+    }
 }

@@ -1,12 +1,12 @@
 package com.bezkoder.spring.security.login.models;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Table(name = "users",
@@ -47,7 +47,10 @@ public class User {
     this.password = password;
   }
 
-  public Long getId() {
+    public User(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    }
+
+    public Long getId() {
     return id;
   }
 
@@ -86,4 +89,20 @@ public class User {
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
+
+
+  //******
+  public List<Project> getProjects() {
+      return projects;
+  }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+    @OneToMany(
+            cascade = CascadeType.ALL,fetch = FetchType.LAZY    )
+    @JoinColumn(name = "user_id")
+
+    private List<Project> projects = new ArrayList<>();
+
 }

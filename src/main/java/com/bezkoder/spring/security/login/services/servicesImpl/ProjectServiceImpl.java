@@ -1,7 +1,9 @@
 package com.bezkoder.spring.security.login.services.servicesImpl;
 
+import com.bezkoder.spring.security.login.models.Job;
 import com.bezkoder.spring.security.login.models.Parameter;
 import com.bezkoder.spring.security.login.models.Project;
+import com.bezkoder.spring.security.login.models.User;
 import com.bezkoder.spring.security.login.repository.JobRepository;
 import com.bezkoder.spring.security.login.repository.ParameterRepository;
 import com.bezkoder.spring.security.login.repository.ProjectRepository;
@@ -10,7 +12,10 @@ import com.jcraft.jsch.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,11 +35,47 @@ class ProjectServiceImpl implements ProjectService {
 
     // Read operation
     @Override
-    public List<Project> fetchProjectList() {
-        return (List<Project>)
-                projectRepository.findAll();
-    }
+    public List<Project> fetchProjectList(User user) {
+        //return (List<Project>)
+             var ii=   projectRepository.findByUser(user).get();
 
+        for (Project var : ii)
+        {
+
+            if(var.getPath()!=null &&var.getPath()!="" )
+            {
+                fillFiles(var);
+            }
+
+        }
+        return ii;
+    }
+    private void fillFiles(Project Pr)
+    {
+        try {
+            var st = Pr.getPath() + "\\Jobs";
+            ArrayList<Job> JobsList = new ArrayList<Job>();
+            File dir = new File(st);
+            String[] list = dir.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(".ipnb");
+                }
+            });
+            for (String fl : list) {
+                var jb = new Job();
+                jb.setName(fl);
+                JobsList.add(jb);
+
+            }
+            Pr.setJobs(JobsList);
+        }catch (Exception ex)
+        {
+            System.out.println(ex.toString());
+
+
+        }
+    }
     @Override
     public List<Project> fetchProjectListByName(String ProjectName) {
         return (List<Project>)
@@ -74,14 +115,14 @@ class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void createFolder(String pth) {
+    public void createFolder(Project prj) {
 
 //String projectPath="C:\\Users\\HomeNet\\Documents\\ggv\\yy";
 //        File theDir = new File(projectPath);
 //        if (!theDir.exists()){
 //            theDir.mkdirs();
 //        }
-        CopyAllJobs(pth);
+        CopyAllJobs(prj);
 
 //
 //        RemoteOps rp=new RemoteOps("169.254.93.216",22,"Mounir-Laptop","Mounir35");
@@ -96,11 +137,11 @@ class ProjectServiceImpl implements ProjectService {
     }
     @Autowired
     private ParameterRepository parameterRepository;
-public void CopyAllJobs(String pth)
+public void CopyAllJobs(Project pr)
 {
     Parameter param= parameterRepository.findByName("all_jobs").get();
     String sourceFolder = param.getPath();
-    String targetFolder = pth+"\\Jobs";
+    String targetFolder = pr.getPath()+"\\"+pr.getName()+"\\Jobs";
     File theDir = new File(targetFolder);
         if (!theDir.exists()){
             theDir.mkdirs();
