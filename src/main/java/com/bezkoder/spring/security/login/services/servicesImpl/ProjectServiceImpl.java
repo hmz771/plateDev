@@ -30,8 +30,6 @@ class ProjectServiceImpl implements ProjectService {
     // Save operation
     @Override
     public Project saveProject(Project Project) {
-        var ooo=parameterRepository.findByName("root_projects").get().getPath();
-        Project.setPath(ooo);
         return projectRepository.save(Project);
     }
 
@@ -55,13 +53,13 @@ class ProjectServiceImpl implements ProjectService {
     private void fillFiles(Project Pr)
     {
         try {
-            var st = Pr.getPath() +"\\"+ Pr.getName()+"\\Jobs";
+            var st = Pr.getPath() + "\\Jobs";
             ArrayList<Job> JobsList = new ArrayList<Job>();
             File dir = new File(st);
             String[] list = dir.list(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(".ipynb");
+                    return name.toLowerCase().endsWith(".ipnb");
                 }
             });
             for (String fl : list) {
@@ -124,7 +122,6 @@ class ProjectServiceImpl implements ProjectService {
 //        if (!theDir.exists()){
 //            theDir.mkdirs();
 //        }
-
         CopyAllJobs(prj);
 
 //
