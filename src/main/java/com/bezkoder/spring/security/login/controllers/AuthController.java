@@ -3,6 +3,7 @@ package com.bezkoder.spring.security.login.controllers;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.bezkoder.spring.security.login.services.InitialServ;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ import com.bezkoder.spring.security.login.security.services.UserDetailsImpl;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
   @Autowired
   AuthenticationManager authenticationManager;
 
@@ -52,6 +54,7 @@ public class AuthController {
 
   @Autowired
   JwtUtils jwtUtils;
+
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {

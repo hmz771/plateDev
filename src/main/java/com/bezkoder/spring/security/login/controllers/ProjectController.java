@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api")
 public class ProjectController {
 
@@ -62,7 +62,7 @@ public class ProjectController {
 
 
         projectService.saveProject(Project);
-        //Project.setPath(parameterRepository.findByName(""));
+        //
         projectService.createFolder(Project);
         return null;
 
