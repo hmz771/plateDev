@@ -19,12 +19,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(maxAge = 3600)
 @RequestMapping("/api")
 public class ProjectController {
 
@@ -53,8 +54,7 @@ public class ProjectController {
     // add operation
     @PostMapping("/Projects")
     public Project saveProject(
-             @RequestBody Project Project)
-    {
+             @RequestBody Project Project)  {
 
             Project.setUser( getCurrentUser());
 
@@ -62,7 +62,7 @@ public class ProjectController {
 
 
         projectService.saveProject(Project);
-        //
+        //Project.setPath(parameterRepository.findByName(""));
         projectService.createFolder(Project);
         return null;
 

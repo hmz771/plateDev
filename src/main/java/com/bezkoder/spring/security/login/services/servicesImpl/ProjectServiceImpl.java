@@ -1,9 +1,6 @@
 package com.bezkoder.spring.security.login.services.servicesImpl;
 
-import com.bezkoder.spring.security.login.models.Job;
-import com.bezkoder.spring.security.login.models.Parameter;
-import com.bezkoder.spring.security.login.models.Project;
-import com.bezkoder.spring.security.login.models.User;
+import com.bezkoder.spring.security.login.models.*;
 import com.bezkoder.spring.security.login.repository.JobRepository;
 import com.bezkoder.spring.security.login.repository.ParameterRepository;
 import com.bezkoder.spring.security.login.repository.ProjectRepository;
@@ -15,6 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.DosFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +29,8 @@ class ProjectServiceImpl implements ProjectService {
     // Save operation
     @Override
     public Project saveProject(Project Project) {
+        var ooo=parameterRepository.findByName("root_projects").get().getPath();
+        Project.setPath(ooo);
         return projectRepository.save(Project);
     }
 
@@ -53,22 +54,41 @@ class ProjectServiceImpl implements ProjectService {
     private void fillFiles(Project Pr)
     {
         try {
-            var st = Pr.getPath() + "\\Jobs";
+            //Fill jobs
+            var st = Pr.getPath() +"\\"+ Pr.getName()+"\\Jobs";
+            var stDta = Pr.getPath() +"\\"+ Pr.getName()+"\\Jobs\\data";
             ArrayList<Job> JobsList = new ArrayList<Job>();
+            ArrayList<DtaObject> DtaList = new ArrayList<DtaObject>();
             File dir = new File(st);
+            File dirDta = new File(stDta);
             String[] list = dir.list(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(".ipnb");
+                    return name.toLowerCase().endsWith(".ipynb");
                 }
             });
             for (String fl : list) {
                 var jb = new Job();
-                jb.setName(fl);
+                jb.setName(fl);jb.setPath("http://localhost:9999/notebooks/"+Pr.getName()+"/Jobs/"+fl);
                 JobsList.add(jb);
 
             }
             Pr.setJobs(JobsList);
+            //******
+            String[] listDta = dir.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(".*");
+                }
+            });
+            for (String fl : listDta) {
+                var dtaObject = new DtaObject();
+                dtaObject.setName(fl);
+                DtaList.add(dtaObject);
+
+            }
+            Pr.setDtaObject(DtaList);
+            //******
         }catch (Exception ex)
         {
             System.out.println(ex.toString());
@@ -115,7 +135,7 @@ class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void createFolder(Project prj) {
+    public void createFolder(Project prj)  {
 
 //String projectPath="C:\\Users\\HomeNet\\Documents\\ggv\\yy";
 //        File theDir = new File(projectPath);
@@ -137,15 +157,46 @@ class ProjectServiceImpl implements ProjectService {
     }
     @Autowired
     private ParameterRepository parameterRepository;
-public void CopyAllJobs(Project pr)
-{
+public void CopyAllJobs(Project pr)  {
     Parameter param= parameterRepository.findByName("all_jobs").get();
     String sourceFolder = param.getPath();
+    //*****
+    String targetFolderPrj = pr.getPath()+"\\"+pr.getName();
+    var ll=Paths.get(targetFolderPrj);
+
+
+    File theDirPrj = new File(ll.toString());
+    if (!theDirPrj.exists()){
+        theDirPrj.mkdirs();
+    }
+    try
+    {
+        DosFileAttributes dosAttributes = Files.readAttributes(Paths.get(targetFolderPrj), DosFileAttributes.class);
+
+        // Set the hidden attribute
+        Files.setAttribute(Paths.get(targetFolderPrj), "dos:hidden", true);
+    } catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+    //*****
+    String targetFolderDtaS = pr.getPath()+"\\"+pr.getName()+"\\Jobs\\data\\Seismic";
+    File theDirDtaS = new File(targetFolderDtaS);
+    if (!theDirDtaS.exists()){
+        theDirDtaS.mkdirs();
+    }
+    String targetFolderDtaW = pr.getPath()+"\\"+pr.getName()+"\\Jobs\\data\\Well";
+    File theDirDtaW = new File(targetFolderDtaW);
+    if (!theDirDtaW.exists()){
+        theDirDtaW.mkdirs();
+    }
+
+    //******
     String targetFolder = pr.getPath()+"\\"+pr.getName()+"\\Jobs";
-    File theDir = new File(targetFolder);
-        if (!theDir.exists()){
-            theDir.mkdirs();
-        }
+//    File theDir = new File(targetFolder);
+//        if (!theDir.exists()){
+//            theDir.mkdirs();
+//        }
     File sFile = new File(sourceFolder);
     File[] sourceFiles = sFile.listFiles();
     for (File fSource : sourceFiles) {

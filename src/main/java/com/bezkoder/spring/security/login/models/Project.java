@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +51,21 @@ public class Project {
         this.user = user;
     }
     @ManyToOne(
-            cascade = CascadeType.ALL,fetch = FetchType.LAZY    )
+            fetch = FetchType.LAZY    )
     @JsonIgnore
     @JoinColumn(name = "user_id")
 
     private User user = new User();
-
+///***********
+public List<DtaObject> getDta() {
+   return dtaObject;
+}
+//
+//    public void setDtaObject(List<DtaObject> dtaObjects) {
+//        this.dtaObject = dtaObjects;
+//    }
+//
+@Transient
+    private List<DtaObject> dtaObject = new ArrayList<>();
+    //***********************
 }
